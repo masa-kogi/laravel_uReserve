@@ -17,8 +17,8 @@
                     </div>
                     @endif
 
-                    <form method="GET" action="{{ route('events.edit', ['event' => $event->id]) }}">
-
+                    <form method="post" action="{{ route('events.reserve', ['id' => $event->id]) }}">
+                        @csrf
                         <div>
                             <x-jet-label for="event_name" value="イベント名" />
                             {{ $event->name }}
@@ -51,53 +51,23 @@
                                 <x-jet-label for="max_people" value="定員" />
                                 {{ $event->max_people }}
                             </div>
-                            <div class="flex space-x-4 justify-around">
-                                @if($event->is_visible)
-                                表示中
-                                @else
-                                非表示
-                                @endif
+                            <div class="mt-4">
+                                <x-jet-label for="reserved_people" value="予約人数" />
+                                <select name="reserved_people" id="">
+                                    @for($i=1; $i<=$reservablePeople; $i++) </div>
+                                        <option value="{{ $i }}">{{ $i }}</option>
+                                        @endfor
+                                </select>
                             </div>
-                            @if($event->eventDate >= \Carbon\Carbon::today()->format('Y年m月d日'))
+                            <input type="hidden" name="id" value="{{ $event->id }}">
                             <x-jet-button class="ml-4">
-                                編集
+                                予約する
                             </x-jet-button>
-                            @endif
-                        </div>
 
                     </form>
                 </div>
             </div>
         </div>
     </div>
-    <div class="py-4">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                <div class="max-w-2xl py-4 mx-auto">
-                    @if (!$users->isEmpty())
-                    <div class="text-center py-2">予約状況</div>
-                    <table class="table-auto w-full text-left whitespace-no-wrap">
-                        <thead>
-                            <tr>
-                                <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">予約者名</th>
-                                <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">予約人数</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($reservations as $reservation)
-                            @if(is_null($reservation['canceled_date']))
-                            <tr>
-                                <td class="px-4 py-3">{{ $reservation['name'] }}</td>
-                                <td class="px-4 py-3">{{ $reservation['number_of_people'] }}</td>
-                            </tr>
-                            @endif
-                            @endforeach
-                        </tbody>
-                    </table>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- <script src="{{ mix('js/flatpickr.js') }}"></script> -->
+
 </x-app-layout>
